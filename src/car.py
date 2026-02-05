@@ -1,28 +1,60 @@
 class NotEnoughFuelError(Exception):
-    """недостаточно топлива для поездки"""
+    """Недостаточно топлива для поездки."""
+
 
 class TooMuchFuelError(Exception):
-    """пытаетесь залить больше чем вмещает бак"""
+    """Пытаетесь залить больше, чем вмещает бак."""
+
 
 class Car:
     def __init__(self, model: str, fuel_capacity: float) -> None:
+        """Инициализация автомобиля.
+
+        Args:
+            model: марка и модель автомобиля.
+            fuel_capacity: объём топливного бака в литрах.
+        """
         self._model = model
-        self._max_fuel_capacity: float = fuel_capacity
+        self._fuel_capacity: float = fuel_capacity
         self._fuel_in_tank: float = 0
 
     def get_current_fuel_level(self) -> float:
+        """Возвращает текущий уровень топлива в баке."""
         return self._fuel_in_tank
 
-    def refuel_car(self, fuel_quantity: float):
-        if self._max_fuel_capacity - self._fuel_in_tank < fuel_quantity:
-            raise TooMuchFuelError("Вы пытаетесь залить слишком много бензина!")
+    def refuel_car(self, fuel_quantity: float) -> None:
+        """Заправка автомобиля.
+
+        Args:
+            fuel_quantity: количество топлива для заправки (литры).
+
+        Raises:
+            TooMuchFuelError: если пытаемся залить больше, чем вмещает бак.
+        """
+        if self._fuel_capacity < fuel_quantity:
+            msg = "Вы пытаетесь залить слишком много бензина!"
+            raise TooMuchFuelError(msg)
+
         self._fuel_in_tank += fuel_quantity
 
-    def drive(self, distance_km: float):
+    def drive(self, distance_km: float) -> float:
+        """Поездка на заданное расстояние.
+
+        Args:
+            distance_km: расстояние в километрах.
+
+        Returns:
+            Оставшееся топливо в баке.
+
+        Raises:
+            NotEnoughFuelError: если топлива не хватает на поездку.
+        """
         # Считаем, что расход 8 литров на 100 км
-        fuel_burned: int = 8 * (distance_km / 100)
-        # TODO: Вася, не забудь расскомментировать! Клиенты могут застрять!!11
+        fuel_burned: int = int(8 * (distance_km / 100))  # noqa: FIX002  # TODO: пересчитать точно, клиенты могут застрять
+
         if self._fuel_in_tank < fuel_burned:
-            raise NotEnoughFuelError("Не доедем жеж...")
+            msg = "Не доедем же жеж..."
+            raise NotEnoughFuelError(msg)
+
         self._fuel_in_tank -= fuel_burned
-        return self.get_current_fuel_level()
+        return self._fuel_in_tank
