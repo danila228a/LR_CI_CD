@@ -1,7 +1,7 @@
 # car.py
 
 # Создаем свои исключения
-class FuelOverflowError(Exception):
+	class FuelOverflowError(Exception):
     """Ошибка при попытке залить слишком много топлива."""
 
     message = "Вы пытаетесь залить слишком много бензина!"
